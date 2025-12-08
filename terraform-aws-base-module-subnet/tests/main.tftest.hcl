@@ -22,56 +22,53 @@ run "subnet_comprehensive_test" {
   command = apply
 
   variables {
-    vpc_id                   = run.setup.vpc_id
-    subnet_name              = "test-subnet-comprehensive"
-    subnet_cidr_block        = "10.0.1.0/24"
-    subnet_availability_zone = "ap-guangzhou-3"
-    subnet_is_multicast      = false
-    subnet_cdc_id            = null
-    subnet_route_table_id    = null
-    subnet_tags = {
-      "hkjc:account-name" = "finance-team-member"
-      "hkjc:cost-centre"  = "546.000.626.00"
+    vpc_id             = run.setup.vpc_id
+    cidr_block         = "10.0.1.0/24"
+    availability_zone  = "ap-east-1a"
+    map_public_ip_on_launch = false
+    tags = {
+      Name        = "test-subnet-comprehensive"
+      environment = "test"
     }
   }
 
   # Assert subnet is created with correct name
   assert {
-    condition     = tencentcloud_subnet.this.name == var.subnet_name
+    condition     = aws_subnet.this.tags["Name"] == var.tags["Name"]
     error_message = <<-EOT
-        The subnet name does not match the expected value.
-        Expected: ${var.subnet_name}
-        Actual: ${tencentcloud_subnet.this.name}
+        The subnet Name tag does not match the expected value.
+        Expected: ${var.tags["Name"]}
+        Actual: ${aws_subnet.this.tags["Name"]}
         EOT
   }
 
   # Assert subnet CIDR block is set correctly
   assert {
-    condition     = tencentcloud_subnet.this.cidr_block == var.subnet_cidr_block
+    condition     = aws_subnet.this.cidr_block == var.cidr_block
     error_message = <<-EOT
         The subnet CIDR block does not match the expected value.
-        Expected: ${var.subnet_cidr_block}
-        Actual: ${tencentcloud_subnet.this.cidr_block}
+        Expected: ${var.cidr_block}
+        Actual: ${aws_subnet.this.cidr_block}
         EOT
   }
 
   # Assert availability zone is configured correctly
   assert {
-    condition     = tencentcloud_subnet.this.availability_zone == var.subnet_availability_zone
+    condition     = aws_subnet.this.availability_zone == var.availability_zone
     error_message = <<-EOT
         The subnet availability zone does not match the expected value.
-        Expected: ${var.subnet_availability_zone}
-        Actual: ${tencentcloud_subnet.this.availability_zone}
+        Expected: ${var.availability_zone}
+        Actual: ${aws_subnet.this.availability_zone}
         EOT
   }
 
   # Assert VPC ID is set correctly
   assert {
-    condition     = tencentcloud_subnet.this.vpc_id == run.setup.vpc_id
+    condition     = aws_subnet.this.vpc_id == run.setup.vpc_id
     error_message = <<-EOT
         The VPC ID does not match the expected value from setup.
         Expected: ${run.setup.vpc_id}
-        Actual: ${tencentcloud_subnet.this.vpc_id}
+        Actual: ${aws_subnet.this.vpc_id}
         EOT
   }
 }

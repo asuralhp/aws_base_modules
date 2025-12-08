@@ -12,7 +12,7 @@ variable "vpc_id" {
   type = string
 
   validation {
-    condition     = length(trim(var.vpc_id)) > 0
+    condition     = length(trimspace(var.vpc_id)) > 0
     error_message = "The VPC ID must be a non-empty string (e.g. 'vpc-0123456789abcdef0')."
   }
 
@@ -68,7 +68,7 @@ variable "availability_zone" {
   default = null
 
   validation {
-    condition     = var.availability_zone == null || length(trim(var.availability_zone)) > 0
+    condition     = var.availability_zone == null || length(trimspace(var.availability_zone)) > 0
     error_message = "When provided, availability_zone must be a non-empty string (e.g. 'us-east-1a')."
   }
 }
@@ -88,7 +88,7 @@ variable "availability_zone_id" {
   default = null
 
   validation {
-    condition     = var.availability_zone_id == null || length(trim(var.availability_zone_id)) > 0
+    condition     = var.availability_zone_id == null || length(trimspace(var.availability_zone_id)) > 0
     error_message = "When provided, availability_zone_id must be a non-empty AZ identifier string."
   }
 }
@@ -179,7 +179,7 @@ variable "customer_owned_ipv4_pool" {
   default = null
 
   validation {
-    condition     = var.customer_owned_ipv4_pool == null || length(trim(var.customer_owned_ipv4_pool)) > 0
+    condition     = var.customer_owned_ipv4_pool == null || length(trimspace(var.customer_owned_ipv4_pool)) > 0
     error_message = "When provided, customer_owned_ipv4_pool must be a non-empty string identifying the pool."
   }
 }
