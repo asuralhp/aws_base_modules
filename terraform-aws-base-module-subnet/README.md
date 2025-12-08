@@ -31,6 +31,7 @@ Resource docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 | availability_zone | (Optional) The Availability Zone for the subnet. | `string` | `null` | no |
 | availability_zone_id | (Optional) The AZ ID for the subnet (e.g., use1-az1). | `string` | `null` | no |
 | map_public_ip_on_launch | (Optional) Assign a public IPv4 address to launched instances. | `bool` | `false` | no |
+| region | (Optional) Region where the resource will be managed. Use provider alias to override provider default. | `string` | `null` | no |
 | assign_ipv6_address_on_creation | (Optional) Assign IPv6 address to instances launched into the subnet. | `bool` | `false` | no |
 | ipv6_cidr_block | (Optional) The IPv6 CIDR block for the subnet. | `string` | `null` | no |
 | private_dns_hostname_type_on_launch | (Optional) Type of hostname for EC2 instances in the subnet. Valid values: ip-name or resource-name. | `string` | `"ip-name"` | no |

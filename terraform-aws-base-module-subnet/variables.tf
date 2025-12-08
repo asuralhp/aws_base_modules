@@ -22,6 +22,18 @@ variable "vpc_id" {
   }
 }
 
+variable "region" {
+  description = <<-EOT
+    (Optional) Region where this resource should be managed.
+
+    Notes:
+    - By default, the AWS provider's configured region will be used.
+    - To manage this resource in a different region from the provider default, use a provider alias and pass that provider when instantiating the module (example documented in README).
+  EOT
+  type    = string
+  default = null
+}
+
 variable "cidr_block" {
   description = <<-EOT
     (Required) IPv4 CIDR block to assign to the subnet.
