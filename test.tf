@@ -27,6 +27,26 @@ module "subnet" {
 	}
 }
 
+# Route table using the base route-table module
+module "route_table" {
+	source = "./terraform-aws-base-module-route-table"
+
+	vpc_id = aws_vpc.test.id
+
+	# No external routes for testing to avoid creating internet-facing resources
+	# `route` defaults to an empty list in the module, so we omit it here.
+
+	tags = {
+		Name = "example-route-table"
+	}
+}
+
+# Associate the created route table to the subnet (no external routes required)
+resource "aws_route_table_association" "subnet_assoc" {
+	subnet_id      = module.subnet.aws_subnet_id
+	route_table_id = module.route_table.aws_route_table_id
+}
+
 output "vpc_id" {
 	description = "ID of the test VPC created for module testing"
 	value       = aws_vpc.test.id
