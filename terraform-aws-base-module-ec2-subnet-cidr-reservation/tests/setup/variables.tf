@@ -9,7 +9,7 @@ variable "vpc_cidr_block" {
 }
 
 variable "vpc_tags" {
-  type = map(string)
+  type    = map(string)
   default = {}
 }
 

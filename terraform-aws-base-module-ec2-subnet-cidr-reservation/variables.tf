@@ -8,8 +8,8 @@ variable "region" {
     - When using this value, you may need to pass an aliased provider into the
       module invocation (see README examples in this repo).
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "subnet_id" {
@@ -84,7 +84,7 @@ variable "tags" {
   default = {}
 
   validation {
-    condition = alltrue([for k in keys(var.tags) : can(regex("^[a-zA-Z0-9:_.-]+$", k))])
+    condition     = alltrue([for k in keys(var.tags) : can(regex("^[a-zA-Z0-9:_.-]+$", k))])
     error_message = "Tag keys may only contain letters, numbers, colon, underscore, dot, and dash."
   }
 }

@@ -20,10 +20,10 @@ run "cidr_reservation_test" {
   command = apply
 
   variables {
-    subnet_id     = run.setup.subnet_id
-    cidr_block    = "10.2.1.0/28"
+    subnet_id        = run.setup.subnet_id
+    cidr_block       = "10.2.1.0/28"
     reservation_type = "explicit"
-    description   = "test reservation"
+    description      = "test reservation"
     tags = {
       Name = "test-reservation"
     }

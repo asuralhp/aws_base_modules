@@ -289,8 +289,8 @@ variable "map_customer_owned_ip_on_launch" {
   default     = false
 
   validation {
-      condition     = !var.map_customer_owned_ip_on_launch || (var.customer_owned_ipv4_pool != null)
-      error_message = "When map_customer_owned_ip_on_launch is true, customer_owned_ipv4_pool must be provided."
+    condition     = !var.map_customer_owned_ip_on_launch || (var.customer_owned_ipv4_pool != null)
+    error_message = "When map_customer_owned_ip_on_launch is true, customer_owned_ipv4_pool must be provided."
   }
 }
 

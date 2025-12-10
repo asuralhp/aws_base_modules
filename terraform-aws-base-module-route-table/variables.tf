@@ -48,8 +48,8 @@ variable "route" {
       { cidr_block = "0.0.0.0/0", gateway_id = "igw-0123456789abcdef0" }
     ]
   EOT
-  type    = list(any)
-  default = []
+  type        = list(any)
+  default     = []
 }
 
 variable "propagating_vgws" {
@@ -64,7 +64,7 @@ variable "tags" {
   default     = {}
 
   validation {
-    condition = alltrue([for k in keys(var.tags) : can(regex("^[a-zA-Z0-9:_.-]+$", k))])
+    condition     = alltrue([for k in keys(var.tags) : can(regex("^[a-zA-Z0-9:_.-]+$", k))])
     error_message = "Tag keys may only contain letters, numbers, colon, underscore, dot, and dash."
   }
 }
