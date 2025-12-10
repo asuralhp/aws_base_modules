@@ -1,79 +1,140 @@
 # terraform-aws-base-module-subnet
-AWS subnet module for Terraform. This module provisions a single subnet in a target VPC.
+
+High-level Terraform module to provision a single AWS Subnet with production-ready
+defaults, strong input validation, and clear outputs for composing into larger
+network topologies.
+
+This README explains:
+- what the module creates
+- how the module works and which inputs matter
+- example usage (minimal and comprehensive)
+- what outputs are produced and how to consume them
 
 Resource docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
 
-## Requirements
+**Contents**
+- `main.tf` - `aws_subnet` resource and any conditional logic
+- `variables.tf` - documented inputs and validations
+- `output.tf` - useful outputs referencing the created subnet
+- `tests/` - module unit tests (tftest)
 
-| Name | Version |
-|------|---------|
-| terraform | >= 1.10.4 |
-| aws | ~> 6.0 |
+## What this module creates
+- `aws_subnet.this` — a single AWS Subnet with the configured IPv4 CIDR and any
+  optional IPv6 CIDR. The module does not create route tables, IGWs, NAT gateways,
+  or other network plumbing; those should be composed by higher-level modules or
+  the caller.
 
-## Providers
+## Key features
+- Input validation for common mistakes (empty VPC IDs, invalid CIDRs).
+- Optional IPv6 support via `ipv6_cidr_block` and IPv6-related flags.
+- Subnet-level options such as `map_public_ip_on_launch`, `private_dns_hostname_type_on_launch`,
+  `enable_dns64`, and `enable_lni_at_device_index`.
+- Explicit support for customer-owned IP pools and Outposts when `map_customer_owned_ip_on_launch`
+  is enabled (module will validate required companion arguments).
 
-| Name | Version |
-|------|---------|
-| aws | ~> 6.0 |
+## Inputs (high level)
+- `vpc_id` (required): the VPC where the subnet will be created.
+- `cidr_block` (required): IPv4 CIDR for the subnet (e.g. `10.0.1.0/24`).
+- `availability_zone` / `availability_zone_id` (optional): pin the subnet to an AZ.
+- `map_public_ip_on_launch` (bool): subnet auto-assign public IP for instances.
+- `assign_ipv6_address_on_creation` (bool) and `ipv6_cidr_block` (string): enable
+  and set an IPv6 allocation for the subnet.
+- `tags` (map): tags to apply (recommended: `Name` and `environment`).
 
-## Resources
-
-| Name | Type |
-|------|------|
-| aws_subnet.this | resource |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| vpc_id | (Required) The VPC ID that hosts the subnet. | `string` | n/a | yes |
-| cidr_block | (Required) The IPv4 CIDR block for the subnet. | `string` | n/a | yes |
-| availability_zone | (Optional) The Availability Zone for the subnet. | `string` | `null` | no |
-| availability_zone_id | (Optional) The AZ ID for the subnet (e.g., use1-az1). | `string` | `null` | no |
-| map_public_ip_on_launch | (Optional) Assign a public IPv4 address to launched instances. | `bool` | `false` | no |
-| region | (Optional) Region where the resource will be managed. Use provider alias to override provider default. | `string` | `null` | no |
-| assign_ipv6_address_on_creation | (Optional) Assign IPv6 address to instances launched into the subnet. | `bool` | `false` | no |
-| ipv6_cidr_block | (Optional) The IPv6 CIDR block for the subnet. | `string` | `null` | no |
-| private_dns_hostname_type_on_launch | (Optional) Type of hostname for EC2 instances in the subnet. Valid values: ip-name or resource-name. | `string` | `"ip-name"` | no |
-| enable_dns64 | (Optional) Enable DNS64 for the subnet. | `bool` | `false` | no |
-| customer_owned_ipv4_pool | (Optional) The customer-owned IPv4 pool for connected devices. | `string` | `null` | no |
-| outpost_arn | (Optional) The ARN of the Outpost to associate with the subnet. | `string` | `null` | no |
-| tags | (Required) A map of tags to assign to the subnet. | `map(string)` | n/a | yes |
+See the `variables.tf` for a complete list with validation and examples.
 
 ## Outputs
+- `aws_subnet_id` — the created subnet ID (use this when wiring other modules).
+- `aws_subnet` — the full subnet object as returned by the AWS provider.
+- `aws_subnet_arn` — the subnet ARN.
+- `aws_subnet_tags_all` — merged tags including provider default tags.
+- `aws_subnet_owner_id` — owner account id.
+- `aws_subnet_ipv6_cidr_block_association_id` — IPv6 association id (if created).
 
-| Name | Description |
-|------|-------------|
-| aws_subnet | All values from the AWS subnet resource. |
-| aws_subnet_id | The ID of the subnet. |
-| aws_subnet_arn | The ARN of the subnet. |
-| aws_subnet_tags_all | All tags assigned to the subnet (including provider default_tags). |
-| aws_subnet_owner_id | AWS account ID that owns the subnet. |
-| aws_subnet_ipv6_cidr_block_association_id | The association ID for the IPv6 CIDR block (if assigned). |
+## Usage examples
 
-## Usage
+Minimal example (create a private subnet):
 
 ```hcl
 module "subnet" {
-  source  = "./terraform-aws-base-module-subnet"
-  vpc_id  = "vpc-0123456789abcdef0"
+  source     = "./terraform-aws-base-module-subnet"
+  vpc_id     = "vpc-0123456789abcdef0"
   cidr_block = "10.0.1.0/24"
-
-  availability_zone               = "us-east-1a"
-  map_public_ip_on_launch         = false
-  assign_ipv6_address_on_creation = false
-  # Optional: adjust deletion timeout when subnets are associated with Lambda functions
-  # timeout_delete = "45m"
 
   tags = {
     Name        = "example-subnet"
     environment = "dev"
   }
 }
+
+output "subnet_id" {
+  value = module.subnet.aws_subnet_id
+}
 ```
 
-## Notes
+Comprehensive example (IPv6 + custom hostname behavior):
 
-- Timeouts: The AWS provider sets sensible defaults (create=10m, delete=20m). When subnets are used by AWS Lambda, deletion can take significantly longer — set `timeout_delete = "45m"` to be safe for those cases.
-- When `map_customer_owned_ip_on_launch` is enabled, both `customer_owned_ipv4_pool` and `outpost_arn` must be provided.
-- For subnets in secondary VPC CIDR blocks (created with `aws_vpc_ipv4_cidr_block_association`), reference that resource's `vpc_id` to ensure correct dependency ordering.
+```hcl
+module "subnet_comprehensive" {
+  source  = "./terraform-aws-base-module-subnet"
+  vpc_id  = "vpc-0123456789abcdef0"
+  cidr_block = "10.0.2.0/24"
+
+  availability_zone = "us-east-1a"
+  assign_ipv6_address_on_creation = true
+  ipv6_cidr_block = "2600:1f18:1234:abcd::/64"
+  private_dns_hostname_type_on_launch = "resource-name"
+
+  tags = {
+    Name = "example-subnet-ipv6"
+  }
+}
+```
+
+Using a provider alias to target a different region:
+
+```hcl
+provider "aws" {
+  alias  = "eu"
+  region = "eu-west-1"
+}
+
+module "subnet_eu" {
+  source = "./terraform-aws-base-module-subnet"
+  providers = { aws = aws.eu }
+
+  # region can also be set via the `region` variable if you prefer
+  vpc_id = "vpc-0abcd1234efgh5678"
+  cidr_block = "10.1.0.0/24"
+  region = "eu-west-1"
+  tags = { Name = "eu-subnet" }
+}
+```
+
+## Testing
+
+This repository includes `tftest` tests under `tests/` that demonstrate typical
+module usage. Run tests from the module directory:
+
+```bash
+terraform init
+terraform test
+```
+
+Tests will create and destroy cloud resources — use a disposable account or
+confirm credentials before running.
+
+## Notes and best practices
+- Deleting a subnet can be delayed by dependent resources (ENIs, Lambda). If you
+  expect long deletion times, increase `timeout_delete` when calling the module.
+- When `map_customer_owned_ip_on_launch` is enabled, the module requires both
+  `customer_owned_ipv4_pool` and `outpost_arn` (validation enforces this).
+- Keep the module focused: create route tables, IGWs, or NAT gateways outside
+  this module so network composition is explicit and auditable.
+
+## Contribution ideas
+- Add `examples/` for typical topologies (public/private pairs, multiple AZs)
+- Add an option to create the VPC when `vpc_id` is omitted (convenient but
+  increases module scope).
+
+*** End Module README ***

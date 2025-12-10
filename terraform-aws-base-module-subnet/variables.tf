@@ -9,7 +9,7 @@ variable "vpc_id" {
 
     Example: "vpc-0a1b2c3d4e5f67890"
   EOT
-  type = string
+  type        = string
 
   validation {
     condition     = length(trimspace(var.vpc_id)) > 0
@@ -27,11 +27,11 @@ variable "region" {
     (Optional) Region where this resource should be managed.
 
     Notes:
-    - By default, the AWS provider's configured region will be used.
+    - By default, ap-east-1 will be used.
     - To manage this resource in a different region from the provider default, use a provider alias and pass that provider when instantiating the module (example documented in README).
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = "ap-east-1"
 }
 
 variable "cidr_block" {
@@ -45,7 +45,7 @@ variable "cidr_block" {
 
     Example: "10.0.1.0/24"
   EOT
-  type = string
+  type        = string
 
   validation {
     condition     = can(cidrhost(var.cidr_block, 0))
@@ -64,8 +64,8 @@ variable "availability_zone" {
 
     Example: "us-east-1a"
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = null
 
   validation {
     condition     = var.availability_zone == null || length(trimspace(var.availability_zone)) > 0
@@ -84,8 +84,8 @@ variable "availability_zone_id" {
 
     Example: "use1-az1"
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = null
 
   validation {
     condition     = var.availability_zone_id == null || length(trimspace(var.availability_zone_id)) > 0
@@ -101,8 +101,8 @@ variable "map_public_ip_on_launch" {
     - This setting controls the subnet-level auto-assign public IP behavior.
     - Default is `false` to prefer private-only subnets.
   EOT
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "assign_ipv6_address_on_creation" {
@@ -113,8 +113,8 @@ variable "assign_ipv6_address_on_creation" {
     - This requires the VPC to have an associated IPv6 CIDR block and the subnet to be allocated an IPv6 CIDR.
     - Default is `false`.
   EOT
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "ipv6_cidr_block" {
@@ -127,8 +127,8 @@ variable "ipv6_cidr_block" {
 
     Example: "2600:1f18:1234:abcd::/64"
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = null
 
   validation {
     condition     = var.ipv6_cidr_block == null || can(cidrhost(var.ipv6_cidr_block, 0))
@@ -146,8 +146,8 @@ variable "private_dns_hostname_type_on_launch" {
 
     Default: "ip-name"
   EOT
-  type    = string
-  default = "ip-name"
+  type        = string
+  default     = "ip-name"
 
   validation {
     condition     = can(regex("^(ip-name|resource-name)$", var.private_dns_hostname_type_on_launch))
@@ -163,8 +163,8 @@ variable "enable_dns64" {
     - DNS64 is used for IPv6-only clients to communicate with IPv4 servers when combined with NAT64.
     - Default: `false`.
   EOT
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "customer_owned_ipv4_pool" {
@@ -175,8 +175,8 @@ variable "customer_owned_ipv4_pool" {
     - Provide the customer-owned pool identifier when using Amazon EC2 IP address management features.
     - Must be a valid pool ID or `null`.
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = null
 
   validation {
     condition     = var.customer_owned_ipv4_pool == null || length(trimspace(var.customer_owned_ipv4_pool)) > 0
@@ -192,8 +192,8 @@ variable "outpost_arn" {
     - Only required when placing resources on an Outpost subnet.
     - Must be a valid Outpost ARN when provided.
   EOT
-  type    = string
-  default = null
+  type        = string
+  default     = null
 
   validation {
     condition     = var.outpost_arn == null || can(regex("^arn:aws(:[a-z0-9-]+)*:outposts:[^:]+:[0-9]{12}:outpost/.+", var.outpost_arn))
@@ -217,11 +217,11 @@ variable "tags" {
       environment = "dev"
     }
   EOT
-  type = map(string)
+  type        = map(string)
 
   validation {
-    condition     = length(var.tags) > 0
-    error_message = "At least one tag is required (recommend including 'Name' and environment/team tags)."
+    condition     = contains(keys(var.tags), "Name") && can(length(trimspace(var.tags["Name"]))) && length(trimspace(var.tags["Name"])) > 0
+    error_message = "A 'Name' tag must be set in the tags map."
   }
 
   validation {
@@ -254,8 +254,8 @@ variable "enable_lni_at_device_index" {
     - When set, indicates the device position for local network interfaces in this subnet (for example, 1 -> eth1).
     - Must be a positive integer when provided.
   EOT
-  type    = number
-  default = null
+  type        = number
+  default     = null
 
   validation {
     condition     = var.enable_lni_at_device_index == null || (var.enable_lni_at_device_index >= 1)
@@ -269,8 +269,8 @@ variable "enable_resource_name_dns_aaaa_record_on_launch" {
 
     Default: `false`.
   EOT
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "enable_resource_name_dns_a_record_on_launch" {
@@ -279,8 +279,8 @@ variable "enable_resource_name_dns_a_record_on_launch" {
 
     Default: `false`.
   EOT
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "ipv6_native" {
@@ -289,8 +289,8 @@ variable "ipv6_native" {
 
     Default: `false`.
   EOT
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "map_customer_owned_ip_on_launch" {
@@ -301,11 +301,11 @@ variable "map_customer_owned_ip_on_launch" {
     - When set to `true`, `customer_owned_ipv4_pool` and `outpost_arn` must also be provided.
     - Default: `false`.
   EOT
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 
   validation {
-    condition = !var.map_customer_owned_ip_on_launch || (var.customer_owned_ipv4_pool != null && var.outpost_arn != null)
+    condition     = !var.map_customer_owned_ip_on_launch || (var.customer_owned_ipv4_pool != null && var.outpost_arn != null)
     error_message = "When map_customer_owned_ip_on_launch is true, customer_owned_ipv4_pool and outpost_arn must be provided."
   }
 }

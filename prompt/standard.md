@@ -22,4 +22,7 @@ required files :
       }
     }
 - tests/main.tftest.hcl
-- README.md
+- README.md 
+  - (please references samples/sample_README.md)
+  - prompt used for this README """help me enrich and expand my readme explaining what the module does, how it works along with usage examples and if helpful, help the enduser understand what is created, and explain what is produced
+  """

@@ -4,7 +4,7 @@ variable "vpc_name" {
 
     Example: "test-vpc-for-subnet-module"
   EOT
-  type = string
+  type        = string
 
   validation {
     condition     = length(trimspace(var.vpc_name)) > 0
@@ -18,7 +18,7 @@ variable "vpc_cidr_block" {
 
     Example: "10.0.0.0/16"
   EOT
-  type = string
+  type        = string
 
   validation {
     condition     = can(cidrhost(var.vpc_cidr_block, 0))
@@ -36,11 +36,11 @@ variable "vpc_tags" {
         "hkjc:cost-centre"  = "546.000.626.00"
       }
   EOT
-  type    = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 
   validation {
-    condition = length(var.vpc_tags) >= 0
+    condition     = length(var.vpc_tags) >= 0
     error_message = "vpc_tags must be a map of strings."
   }
 }
