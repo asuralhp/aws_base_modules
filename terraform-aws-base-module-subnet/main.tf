@@ -10,7 +10,6 @@ resource "aws_subnet" "this" {
   private_dns_hostname_type_on_launch            = var.private_dns_hostname_type_on_launch
   enable_dns64                                   = var.enable_dns64
   customer_owned_ipv4_pool                       = var.map_customer_owned_ip_on_launch ? var.customer_owned_ipv4_pool : null
-  outpost_arn                                    = var.map_customer_owned_ip_on_launch ? var.outpost_arn : null
   enable_lni_at_device_index                     = var.enable_lni_at_device_index
   enable_resource_name_dns_aaaa_record_on_launch = var.enable_resource_name_dns_aaaa_record_on_launch
   enable_resource_name_dns_a_record_on_launch    = var.enable_resource_name_dns_a_record_on_launch

@@ -125,11 +125,9 @@ Tests will create and destroy cloud resources — use a disposable account or
 confirm credentials before running.
 
 ## Notes and best practices
-- Deleting a subnet can be delayed by dependent resources (ENIs, Lambda). If you
   expect long deletion times, increase `timeout_delete` when calling the module.
-- When `map_customer_owned_ip_on_launch` is enabled, the module requires both
-  `customer_owned_ipv4_pool` and `outpost_arn` (validation enforces this).
-- Keep the module focused: create route tables, IGWs, or NAT gateways outside
+ When `map_customer_owned_ip_on_launch` is enabled, the module requires
+ `customer_owned_ipv4_pool` (validation enforces this).
   this module so network composition is explicit and auditable.
 
 ## Contribution ideas

@@ -184,22 +184,6 @@ variable "customer_owned_ipv4_pool" {
   }
 }
 
-variable "outpost_arn" {
-  description = <<-EOT
-    (Optional) ARN of the AWS Outpost to associate with the subnet.
-
-    Notes:
-    - Only required when placing resources on an Outpost subnet.
-    - Must be a valid Outpost ARN when provided.
-  EOT
-  type        = string
-  default     = null
-
-  validation {
-    condition     = var.outpost_arn == null || can(regex("^arn:aws(:[a-z0-9-]+)*:outposts:[^:]+:[0-9]{12}:outpost/.+", var.outpost_arn))
-    error_message = "When provided, outpost_arn must be a valid Outpost ARN (arn:aws:outposts:...)."
-  }
-}
 
 variable "tags" {
   description = <<-EOT
@@ -298,15 +282,15 @@ variable "map_customer_owned_ip_on_launch" {
     (Optional) Specify true to indicate that network interfaces created in the subnet should be assigned a customer owned IP address.
 
     Notes:
-    - When set to `true`, `customer_owned_ipv4_pool` and `outpost_arn` must also be provided.
-    - Default: `false`.
+      - When set to `true`, `customer_owned_ipv4_pool` must also be provided.
+      - Default: `false`.
   EOT
   type        = bool
   default     = false
 
   validation {
-    condition     = !var.map_customer_owned_ip_on_launch || (var.customer_owned_ipv4_pool != null && var.outpost_arn != null)
-    error_message = "When map_customer_owned_ip_on_launch is true, customer_owned_ipv4_pool and outpost_arn must be provided."
+      condition     = !var.map_customer_owned_ip_on_launch || (var.customer_owned_ipv4_pool != null)
+      error_message = "When map_customer_owned_ip_on_launch is true, customer_owned_ipv4_pool must be provided."
   }
 }
 
