@@ -1,6 +1,6 @@
 base_name = "terraform-aws-base-module"
-resource_name = "route_table"
-resource_link = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table"
+resource_name = "ec2_subnet_cidr_reservation"
+resource_link = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_subnet_cidr_reservation"
 folder_name = base_name + "-" + resource_name
 
 

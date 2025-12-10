@@ -55,6 +55,26 @@ resource "aws_route_table_association" "subnet_assoc" {
 	route_table_id = module.route_table.aws_route_table_id
 }
 
+# CIDR reservation for testing (no external resources)
+module "cidr_reservation" {
+	source = "./terraform-aws-base-module-ec2-subnet-cidr-reservation"
+
+	subnet_id        = module.subnet.aws_subnet_id
+	cidr_block       = "10.0.1.16/28"
+	reservation_type = "explicit"
+	description      = "test reservation created by local test.tf"
+
+	tags = {
+		Name = "test-reservation"
+		environment = "test"
+	}
+}
+
+output "reservation_id" {
+	description = "CIDR reservation ID created by the test module"
+	value       = module.cidr_reservation.aws_ec2_subnet_cidr_reservation_id
+}
+
 output "vpc_id" {
 	description = "ID of the test VPC created for module testing"
 	value       = aws_vpc.test.id
