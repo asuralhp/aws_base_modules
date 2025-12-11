@@ -105,36 +105,6 @@ variable "map_public_ip_on_launch" {
   default     = false
 }
 
-variable "assign_ipv6_address_on_creation" {
-  description = <<-EOT
-    (Optional) If true, instances launched into the subnet will be assigned an IPv6 address (when IPv6 is enabled).
-
-    Notes:
-    - This requires the VPC to have an associated IPv6 CIDR block and the subnet to be allocated an IPv6 CIDR.
-    - Default is `false`.
-  EOT
-  type        = bool
-  default     = false
-}
-
-variable "ipv6_cidr_block" {
-  description = <<-EOT
-    (Optional) IPv6 CIDR block to assign to the subnet.
-
-    Notes:
-    - When provided, it must be a valid IPv6 CIDR range and within the VPC's IPv6 allocation.
-    - Changing this after creation may not be supported depending on AWS capabilities.
-
-    Example: "2600:1f18:1234:abcd::/64"
-  EOT
-  type        = string
-  default     = null
-
-  validation {
-    condition     = var.ipv6_cidr_block == null || can(cidrhost(var.ipv6_cidr_block, 0))
-    error_message = "When provided, ipv6_cidr_block must be valid CIDR notation (IPv6)."
-  }
-}
 
 variable "private_dns_hostname_type_on_launch" {
   description = <<-EOT
@@ -155,17 +125,6 @@ variable "private_dns_hostname_type_on_launch" {
   }
 }
 
-variable "enable_dns64" {
-  description = <<-EOT
-    (Optional) Enable DNS64 on the subnet.
-
-    Notes:
-    - DNS64 is used for IPv6-only clients to communicate with IPv4 servers when combined with NAT64.
-    - Default: `false`.
-  EOT
-  type        = bool
-  default     = false
-}
 
 variable "customer_owned_ipv4_pool" {
   description = <<-EOT
@@ -247,15 +206,7 @@ variable "enable_lni_at_device_index" {
   }
 }
 
-variable "enable_resource_name_dns_aaaa_record_on_launch" {
-  description = <<-EOT
-    (Optional) Indicates whether to respond to DNS queries for instance hostnames with DNS AAAA records.
 
-    Default: `false`.
-  EOT
-  type        = bool
-  default     = false
-}
 
 variable "enable_resource_name_dns_a_record_on_launch" {
   description = <<-EOT
@@ -267,15 +218,7 @@ variable "enable_resource_name_dns_a_record_on_launch" {
   default     = false
 }
 
-variable "ipv6_native" {
-  description = <<-EOT
-    (Optional) Indicates whether to create an IPv6-only subnet.
 
-    Default: `false`.
-  EOT
-  type        = bool
-  default     = false
-}
 
 variable "map_customer_owned_ip_on_launch" {
   description = <<-EOT

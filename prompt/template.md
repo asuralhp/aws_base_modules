@@ -1,7 +1,7 @@
 base_name = "terraform-aws-base-module"
-resource_name = "ec2_subnet_cidr_reservation"
-resource_link = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_subnet_cidr_reservation"
-folder_name = base_name + "-" + resource_name
+resource_name = "aws_ec2_transit_gateway"
+resource_link = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_transit_gateway"
+folder_name = (base_name + "-" + resource_name).replace"_"by"-"
 
 
 - create folder with name folder_name

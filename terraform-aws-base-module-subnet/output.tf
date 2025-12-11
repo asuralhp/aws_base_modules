@@ -23,7 +23,4 @@ output "aws_subnet_owner_id" {
   description = "AWS account ID that owns the subnet."
 }
 
-output "aws_subnet_ipv6_cidr_block_association_id" {
-  value       = aws_subnet.this.ipv6_cidr_block_association_id
-  description = "The association ID for the IPv6 CIDR block (if assigned)."
-}
+

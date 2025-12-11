@@ -1,7 +1,7 @@
 variable "region" {
-  description = "(Optional) Region where this resource will be managed. If null, the provider default region is used."
+  description = "(Optional) Region where this resource will be managed. Defaults to ap-east-1 if not provided."
   type        = string
-  default     = null
+  default     = "ap-east-1"
 }
 
 variable "vpc_id" {
@@ -23,7 +23,7 @@ variable "route" {
     One of the following destination arguments must be supplied per route:
 
     - `cidr_block` - (Required) The CIDR block of the route.
-    - `ipv6_cidr_block` - (Optional) The IPv6 CIDR block of the route.
+    
     - `destination_prefix_list_id` - (Optional) The ID of a managed prefix list destination of the route.
 
     One of the following target arguments must be supplied per route:

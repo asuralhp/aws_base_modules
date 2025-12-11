@@ -1,13 +1,13 @@
 # terraform-aws-base-module-subnet
 
-A reusable, opinionated Terraform module for creating and managing an AWS Subnet within a Virtual Private Cloud (VPC). This module abstracts the configuration of subnets, ensuring consistent tagging, validation, and support for both IPv4 and IPv6 networking features.
+A reusable, opinionated Terraform module for creating and managing an AWS Subnet within a Virtual Private Cloud (VPC). This module abstracts the configuration of subnets, ensuring consistent tagging and validation for IPv4-only networking.
 
 ---
 
 ## What Does This Module Do?
 
 - **Creates an AWS Subnet** within a specified VPC.
-- **Supports IPv4 and IPv6** addressing schemes.
+- **Supports IPv4** addressing scheme.
 - **Configures Public IP Assignment** for instances launched in the subnet.
 - **Manages DNS Settings** including private DNS hostnames and DNS A/AAAA records.
 - **Enforces Input Validation** for critical parameters like VPC ID and CIDR blocks.
@@ -25,7 +25,7 @@ This module wraps the standard `aws_subnet` resource, adding a layer of input va
    You provide the `vpc_id` where the subnet will reside. The module validates that the ID format is correct.
 
 2. **Addressing & Placement:**
-   You define the `cidr_block` (IPv4) and optionally an `ipv6_cidr_block`. You can also pin the subnet to a specific `availability_zone` or `availability_zone_id`.
+  You define the `cidr_block` (IPv4). You can also pin the subnet to a specific `availability_zone` or `availability_zone_id`.
 
 3. **Network Configuration:**
    You configure behavior such as `map_public_ip_on_launch` (for public subnets) and DNS settings (`enable_resource_name_dns_a_record_on_launch`, etc.).
@@ -82,23 +82,7 @@ module "public_subnet" {
 }
 ```
 
-### IPv6 Enabled Subnet
-
-```hcl
-module "ipv6_subnet" {
-  source = "git::https://github.com/your-org/terraform-aws-base-module-subnet.git?ref=v1.0.0"
-
-  vpc_id                                       = "vpc-0a1b2c3d4e5f67890"
-  cidr_block                                   = "10.0.3.0/24"
-  ipv6_cidr_block                              = "2001:db8:1234:1a00::/64"
-  assign_ipv6_address_on_creation              = true
-  enable_resource_name_dns_aaaa_record_on_launch = true
-
-  tags = {
-    Name = "my-ipv6-subnet"
-  }
-}
-```
+ 
 
 ---
 
@@ -139,13 +123,13 @@ When you apply this module, it produces:
 | Name | Version |
 |------|---------|
 | terraform | >= 1.10.4 |
-| aws | ~> 6.0.0 |
+| aws | ~> 6.25.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 6.0.0 |
+| aws | ~> 6.25.0 |
 
 ## Modules
 
@@ -166,12 +150,8 @@ No modules.
 | availability_zone | AWS Availability Zone where the subnet will be created. | `string` | `null` | no |
 | availability_zone_id | The Availability Zone ID to use for the subnet. | `string` | `null` | no |
 | map_public_ip_on_launch | If true, instances launched into the subnet will receive a public IPv4 address by default. | `bool` | `false` | no |
-| assign_ipv6_address_on_creation | Specify true to indicate that network interfaces created in the specified subnet should be assigned an IPv6 address. | `bool` | `false` | no |
-| ipv6_cidr_block | The IPv6 network range for the subnet, in CIDR notation. | `string` | `null` | no |
-| ipv6_native | Indicates whether to create an IPv6-only subnet. | `bool` | `false` | no |
-| enable_dns64 | Indicates whether DNS queries made to the Amazon-provided DNS Resolver in this subnet should return synthetic IPv6 addresses for IPv4-only destinations. | `bool` | `false` | no |
 | enable_resource_name_dns_a_record_on_launch | Indicates whether to respond to DNS queries for instance hostnames with DNS A records. | `bool` | `false` | no |
-| enable_resource_name_dns_aaaa_record_on_launch | Indicates whether to respond to DNS queries for instance hostnames with DNS AAAA records. | `bool` | `false` | no |
+ 
 | private_dns_hostname_type_on_launch | The type of hostnames to assign to instances in the subnet at launch. | `string` | `null` | no |
 | enable_lni_at_device_index | Indicates the device position for local network interfaces in this subnet. | `number` | `null` | no |
 | tags | A map of tags to assign to the resource. | `map(string)` | `{}` | no |
@@ -186,4 +166,4 @@ No modules.
 | aws_subnet_arn | The ARN of the subnet. |
 | aws_subnet_tags_all | All tags assigned to the subnet. |
 | aws_subnet_owner_id | AWS account ID that owns the subnet. |
-| aws_subnet_ipv6_cidr_block_association_id | The association ID for the IPv6 CIDR block. |
+ 

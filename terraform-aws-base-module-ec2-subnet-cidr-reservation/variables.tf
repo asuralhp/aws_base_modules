@@ -3,13 +3,10 @@ variable "region" {
     (Optional) AWS region where this resource should be created.
 
     Notes:
-    - By default the provider's configured region will be used. Set this only when
-      you need to manage the resource in a different region from the provider.
-    - When using this value, you may need to pass an aliased provider into the
-      module invocation (see README examples in this repo).
+    - Defaults to ap-east-1 when not provided.
   EOT
   type        = string
-  default     = null
+  default     = "ap-east-1"
 }
 
 variable "subnet_id" {
@@ -21,9 +18,10 @@ variable "subnet_id" {
       module is executed.
     - Must be a non-empty string and conform to the AWS subnet id pattern (e.g. "subnet-0123abcd").
     - Changing this value after creation will replace the reservation (ForceNew behavior).
+  
+    Example: "subnet-0123456789abcdef0"
   EOT
-  # Example: "subnet-0123456789abcdef0"
-  type = string
+  type        = string
 
   validation {
     condition     = length(trimspace(var.subnet_id)) > 0
@@ -39,9 +37,10 @@ variable "cidr_block" {
     - Must be a valid IPv4 CIDR notation (for example: "10.0.1.0/28").
     - Must be contained within the parent subnet's CIDR block.
     - This value cannot be changed after creation (ForceNew behavior for the reservation).
+  
+    Example: "10.0.1.0/28"
   EOT
-  # Example: "10.0.1.0/28"
-  type = string
+  type        = string
 
   validation {
     condition     = can(cidrhost(var.cidr_block, 0))
@@ -56,10 +55,11 @@ variable "description" {
     Notes:
     - Helpful to record purpose, owner, or tracking ticket information.
     - Max length enforced by AWS; keep descriptions concise.
+  
+  Example: "Reserved for dev worker nodes (ticket: ABC-123)"
   EOT
-  # Example: "Reserved for dev worker nodes (ticket: ABC-123)"
-  type    = string
-  default = null
+  type        = string
+  default     = null
 
   validation {
     condition     = var.description == null || length(trimspace(var.description)) > 0
@@ -74,14 +74,15 @@ variable "tags" {
     Best practices:
     - Include a `Name` tag and organizational tags such as `environment` or `team`.
     - Tag keys: 1-127 chars. Tag values: 0-255 chars. Avoid disallowed characters.
+  
+    Example:
+    {
+      Name        = "example-reservation"
+      environment = "test"
+    }
   EOT
-  # Example:
-  # {
-  #   Name        = "example-reservation"
-  #   environment = "test"
-  # }
-  type    = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 
   validation {
     condition     = alltrue([for k in keys(var.tags) : can(regex("^[a-zA-Z0-9:_.-]+$", k))])
@@ -97,9 +98,10 @@ variable "reservation_type" {
     - Common values include "explicit" (reserve the exact provided CIDR) or
       provider-specific reservation types. This value is required by the
       AWS API for subnet CIDR reservations.
+    
+    Example: "explicit"
   EOT
-  # Example: "explicit"
-  type = string
+  type        = string
 
   validation {
     condition     = length(trimspace(var.reservation_type)) > 0

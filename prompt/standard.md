@@ -2,14 +2,15 @@
 	
 	
 required files :	
-- data.tf
-- locals.tf
+- data.tf (Optional)
+- locals.tf (Optional)
 - main.tf
 - output.tf (Optional)
 - variables.tf
   - description	
   - validation
   - // description and validation must be high detailed. refer to tencentcloud's one variables.tf (do not fully follow, because it is different cloud) 	
+  - variable region Defaults to "ap-east-1"
 - version.tf
   - terraform {
       required_version = ">= 1.10.4"
@@ -23,7 +24,7 @@ required files :
     }
 - tests/main.tftest.hcl
 - README.md 
-  - (please references samples/sample_README.md)
+  - (please references ./sample_README.md)
   - prompt used for this README """help me enrich and expand my readme explaining what the module does, how it works along with usage examples and if helpful, help the enduser understand what is created, and explain what is produced"""
   - (if not applicable, then skip it)
   - ```
