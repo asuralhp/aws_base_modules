@@ -6,3 +6,8 @@ terraform validate
 terraform test
 
 ```
+
+## TF Lint 
+```
+tflint
+```

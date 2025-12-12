@@ -1,7 +1,7 @@
 variable "vpc_name" {
   description = <<-EOT
     (Required) Friendly name for the test VPC. This will be used as the `Name` tag on the VPC.
-
+ 
     Example: "test-vpc-for-subnet-module"
   EOT
   type        = string

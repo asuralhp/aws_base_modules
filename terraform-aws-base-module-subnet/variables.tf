@@ -126,66 +126,32 @@ variable "private_dns_hostname_type_on_launch" {
 }
 
 
-variable "customer_owned_ipv4_pool" {
-  description = <<-EOT
-    (Optional) The ID of a customer-owned IPv4 address pool to use for instances in this subnet.
-
-    Notes:
-    - Provide the customer-owned pool identifier when using Amazon EC2 IP address management features.
-    - Must be a valid pool ID or `null`.
-  EOT
-  type        = string
-  default     = null
-
-  validation {
-    condition     = var.customer_owned_ipv4_pool == null || length(trimspace(var.customer_owned_ipv4_pool)) > 0
-    error_message = "When provided, customer_owned_ipv4_pool must be a non-empty string identifying the pool."
-  }
-}
 
 
 variable "tags" {
   description = <<-EOT
-    (Required) Map of tags to apply to the subnet.
-
-    Requirements:
-    - Must be a map of string keys to string values.
-    - At least one tag is required (recommended to include 'Name' and organizational tags such as environment/team).
-    - Tag keys must be 1-127 characters; tag values must be 0-255 characters per AWS limits.
-    - Keys should avoid disallowed characters; using lowercase letters, numbers, colon, dash, underscore, and dot is recommended.
-
-    Example:
-    {
-      Name        = "example-subnet"
-      environment = "dev"
-    }
-  EOT
+ 	(Required) Key-value pairs for categorizing and organizing resources.
+ 
+	Requirements:
+ 	- Must be a map of string key-value pairs.
+ 	- Useful for resource management, cost allocation, and access control.
+ 	- Maximum 50 tags allowed.
+ 
+	Example:
+   	tags = {
+     	Name    	= "my-vpc"
+     	Environment = "dev"
+     	Project 	= "website"
+   	}
+   EOT
   type        = map(string)
-
   validation {
-    condition     = contains(keys(var.tags), "Name") && can(length(trimspace(var.tags["Name"]))) && length(trimspace(var.tags["Name"])) > 0
+    condition     = length(keys(var.tags)) <= 50
+    error_message = "The VPC tags must not exceed 50 tags."
+  }
+  validation {
+    condition     = contains(keys(var.tags), "Name")
     error_message = "A 'Name' tag must be set in the tags map."
-  }
-
-  validation {
-    condition = alltrue([
-      for k in keys(var.tags) : can(length(k) <= 127)
-    ])
-    error_message = "All tag keys must be 127 characters or fewer."
-  }
-
-  validation {
-    condition = alltrue([
-      for v in values(var.tags) : can(length(v) <= 255)
-    ])
-    error_message = "All tag values must be 255 characters or fewer."
-  }
-
-  validation {
-    condition = alltrue([
-      for k in keys(var.tags) : can(regex("^[a-zA-Z0-9:_.-]+$", k))
-    ])
-    error_message = "Tag keys may only contain letters, numbers, colon, underscore, dot, and dash."
   }
 }
 
@@ -220,20 +186,6 @@ variable "enable_resource_name_dns_a_record_on_launch" {
 
 
 
-variable "map_customer_owned_ip_on_launch" {
-  description = <<-EOT
-    (Optional) Specify true to indicate that network interfaces created in the subnet should be assigned a customer owned IP address.
 
-    Notes:
-      - When set to `true`, `customer_owned_ipv4_pool` must also be provided.
-      - Default: `false`.
-  EOT
-  type        = bool
-  default     = false
 
-  validation {
-    condition     = !var.map_customer_owned_ip_on_launch || (var.customer_owned_ipv4_pool != null)
-    error_message = "When map_customer_owned_ip_on_launch is true, customer_owned_ipv4_pool must be provided."
-  }
-}
 

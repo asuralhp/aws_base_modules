@@ -10,3 +10,4 @@ resource "aws_subnet" "this" {
   enable_resource_name_dns_a_record_on_launch = var.enable_resource_name_dns_a_record_on_launch
   tags                                        = var.tags
 }
+ 

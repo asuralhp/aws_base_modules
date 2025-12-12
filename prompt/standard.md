@@ -5,12 +5,41 @@ required files :
 - data.tf (Optional)
 - locals.tf (Optional)
 - main.tf
-- output.tf (Optional)
+- outputs.tf (Optional)
 - variables.tf
   - description	
   - validation
   - // description and validation must be high detailed. refer to tencentcloud's one variables.tf (do not fully follow, because it is different cloud) 	
   - variable region Defaults to "ap-east-1"
+  - hard code tags variable like this
+    - ```
+    variable "tags" {
+      description = <<-EOT
+      (Required) Key-value pairs for categorizing and organizing resources.
+    
+      Requirements:
+      - Must be a map of string key-value pairs.
+      - Useful for resource management, cost allocation, and access control.
+      - Maximum 50 tags allowed.
+    
+      Example:
+        tags = {
+          Name    	= "my-vpc"
+          Environment = "dev"
+          Project 	= "website"
+        }
+      EOT
+      type    	= map(string)
+      validation {
+      condition 	= length(keys(var.tags)) <= 50
+      error_message = "The VPC tags must not exceed 50 tags."
+      }
+      validation {
+      condition 	= contains(keys(var.tags), "Name")
+      error_message = "A 'Name' tag must be set in the tags map."
+      }
+    }
+    ```
 - version.tf
   - terraform {
       required_version = ">= 1.10.4"
